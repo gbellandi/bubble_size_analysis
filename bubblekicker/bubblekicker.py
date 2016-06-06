@@ -111,3 +111,10 @@ class BubbleKicker(object):
         # regionprops
         return None
 
+    def perform_pipeline(self, threshold):
+        """execute the different algorithms as a pipeline with given settings"""
+        self.edge_detect_image(threshold)
+        self.dilate_image()
+        # ...
+
+        return self.current_image
