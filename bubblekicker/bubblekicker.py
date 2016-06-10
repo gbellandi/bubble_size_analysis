@@ -112,7 +112,8 @@ class BubbleKicker(object):
         return None
 
     def perform_pipeline(self, threshold):
-        """execute the different algorithms as a pipeline with given settings"""
+        """execute the different algorithms as a pipeline
+        with given settings"""
         self.edge_detect_image(threshold)
         self.dilate_image()
         # ...
