@@ -37,11 +37,12 @@ class BubbleKicker(object):
         if channel not in ['red', 'green', 'blue']:
             raise Exception('Not a valid channel for RGB color scheme!')
 
-    def edge_detect_image(self, threshold):
+    def edge_detect_image(self, sigma=3, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image"""
 
         # perform algorithm
         image = canny(self.current_image,
+                      sigma=sigma,
                       low_threshold=threshold[0],
                       high_threshold=threshold[1])
 

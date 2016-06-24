@@ -9,5 +9,5 @@ setup(
     author='Giacomo Bellandi, Stijn Van Hoey',
     author_email='',
     description='',
-    requires=['matplotlib', 'scikit-image']
+    install_requires=['matplotlib', 'scikit-image']
 )
