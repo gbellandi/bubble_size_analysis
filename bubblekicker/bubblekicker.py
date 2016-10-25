@@ -210,19 +210,6 @@ class BubbleKicker(object):
 
         return ret, markers
 
-    def perform_pipeline_canny(self, threshold, dilate_footprint,
-                                border_buffer_size, border_bgval,
-                                erode_footprint):
-        """execute the different algorithms as a pipeline
-        with given settings"""
-        self.edge_detect_canny_opencv(threshold)
-        self.dilate_opencv(dilate_footprint)
-        self.fill_holes_opencv()
-        self.clear_border_skimage(border_buffer_size, border_bgval)
-        self.erode_opencv(erode_footprint)
-
-        return self.current_image
-
     def what_have_i_done(self):
         """ print the current log statements"""
         self.logs.print_log_sequence()
