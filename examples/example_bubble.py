@@ -2,18 +2,25 @@
 import matplotlib.pyplot as plt
 
 from bubblekicker.bubblekicker import BubbleKicker
+from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
 
 ###############
 # EXAMPLE 1: pipeline ass such
 ###############
 
-bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
-
-bubbler.perform_pipeline_canny([120, 180], 3, 3, 1, 1)
-
+# CANNY PIPELINE
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
 # show the resulting image of the detected bubbles
 bubbler.plot()
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
 
+# ADAPTIVE THRESHOLD PIPELINE
+bubbler = AdaptiveThresholdPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run(91, 18, 3, 1, 1)
+# show the resulting image of the detected bubbles
+bubbler.plot()
 # show the individual steps performed to get this result
 bubbler.what_have_i_done()
 
@@ -49,17 +56,6 @@ bubbler.adaptive_threshold_opencv()
 bubbler.clear_border_skimage()
 bubbler.plot()
 bubbler.what_have_i_done()
-
-######################
-# EXAMPLE 3
-######################
-
-from bubblekicker.pipelines import CannyPipeline
-
-bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
-result = bubbler.run([120, 180], 3, 3, 1, 1)
-bubbler.plot()
-
 
 plt.show()
 
