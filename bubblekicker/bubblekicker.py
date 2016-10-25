@@ -3,12 +3,23 @@ S. Van Hoey
 2016-06-06
 """
 
+import numpy as np
+
 from skimage.data import imread
 from skimage.feature import canny
-from skimage.morphology import erosion, dilation, rectangle
+from skimage.segmentation import clear_border
+from skimage.morphology import dilation, rectangle
 
+import cv2 as cv
 
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
+
+
+class NotAllowedChannel(Exception):
+    """
+    Exception placeholder for easier debugging.
+    """
+    pass
 
 
 class BubbleKicker(object):
@@ -35,12 +46,22 @@ class BubbleKicker(object):
     def _channel_control(channel):
         """check if channel is either red, green, blue"""
         if channel not in ['red', 'green', 'blue']:
-            raise Exception('Not a valid channel for RGB color scheme!')
+            raise NotAllowedChannel('Not a valid channel for RGB color scheme!')
 
-    def edge_detect_image(self, sigma=3, threshold=[0.01, 0.5]):
+    def edge_detect_opencv(self, threshold=[0.01, 0.5]):
+        """perform the edge detection algorithm of Canny on the image using
+        the openCV package"""
+
+        image = cv.Canny(self.current_image,
+                         low_threshold=threshold[0],
+                         high_threshold=threshold[1])
+
+        self.current_image = image
+        return image
+
+    def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image"""
 
-        # perform algorithm
         image = canny(self.current_image,
                       sigma=sigma,
                       low_threshold=threshold[0],
@@ -49,7 +70,21 @@ class BubbleKicker(object):
         self.current_image = image
         return image
 
-    def dilate_image(self):
+    def dilate_opencv(self, footprintsize=3):
+        """perform the dilation of the image"""
+
+        # set up structuring element with footprintsize
+        kernel = np.ones((footprintsize, footprintsize), np.uint8)
+
+        # perform algorithm with given environment,
+        # store in same memory location
+        image = cv.dilate(self.current_image, kernel, iterations=1)
+
+        # update current image
+        self.current_image = image
+        return image
+
+    def dilate_skimage(self):
         """perform the dilation of the image"""
 
         # set up structuring element
@@ -63,34 +98,34 @@ class BubbleKicker(object):
 
         return image
 
-    def fill_holes_image(self):
+    def fill_holes_opencv(self):
         """fill the holes of the image"""
 
         # perform algorithm
-        # ...
-        image = None
+        h, w = self.current_image.shape[:2]  # stores image sizes
+        mask = np.zeros((h + 2, w + 2), np.uint8)
+        image = cv.floodFill(self.current_image, mask, (0, 0), 0)
 
         # update current image
         self.current_image = image
         return image
 
-    def clear_border_image(self):
+    def clear_border_skimage(self, buffer_size=3, bgval=1):
         """clear the borders of the image"""
 
         # perform algorithm
-        # ...erosion
-        image = None
+        image_inv = cv.bitwise_not(self.current_image)
+        image = clear_border(image_inv, buffer_size=buffer_size, bgval=bgval)
 
         # update current image
         self.current_image = image
         return image
 
-    def erode_image(self):
+    def erode_opencv(self, footprintsize=1):
         """erode the image"""
 
-        # perform algorithm
-        # ...
-        image = None
+        kernel = np.ones((footprintsize, footprintsize), np.uint8)
+        image = cv.erode(self.current_image, kernel, iterations=1)
 
         # update current image
         self.current_image = image
@@ -99,24 +134,24 @@ class BubbleKicker(object):
     def label_bubbles(self):
         """provide a label for each bubble in the image"""
 
-        # perform algorithm
-        # ...
-        image = None
+        ret, markers = cv.connectedComponents(1 - self.current_image)
 
-        # update current image
-        self.current_image = image
-        return image
+        return ret, markers
 
     def calculate_properties(self):
         """calculate the required statistics"""
         # regionprops
         return None
 
-    def perform_pipeline(self, threshold):
+    def perform_pipeline_opencv(self, threshold, dilate_footprint,
+                                border_buffer_size, border_bgval,
+                                erode_footprint):
         """execute the different algorithms as a pipeline
         with given settings"""
         self.edge_detect_image(threshold)
-        self.dilate_image()
-        # ...
+        self.dilate_opencv(dilate_footprint)
+        self.fill_holes_opencv()
+        self.clear_border_skimage(border_buffer_size, border_bgval)
+        self.erode_opencv(erode_footprint)
 
         return self.current_image
