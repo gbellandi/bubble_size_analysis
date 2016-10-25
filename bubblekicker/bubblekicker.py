@@ -80,7 +80,7 @@ class BubbleKicker(object):
             raise NotAllowedChannel('Not a valid channel for '
                                     'RGB color scheme!')
 
-    def edge_detect_opencv(self, threshold=[0.01, 0.5]):
+    def edge_detect_canny_opencv(self, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image using
         the openCV package"""
 
@@ -93,7 +93,7 @@ class BubbleKicker(object):
                           '- opencv'.format(threshold[0], threshold[1]))
         return image
 
-    def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
+    def edge_detect_canny_skimage(self, sigma=3, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image"""
         image = canny(self.current_image,
                       sigma=sigma,
@@ -108,6 +108,19 @@ class BubbleKicker(object):
                           '- skimage'.format(threshold[0],
                                              threshold[1],
                                              sigma))
+        return image
+
+    def adaptive_threshold_opencv(self, blocksize=92, cvalue=18):
+        """perform the edge detection algorithm of Canny on the image using
+        the openCV package"""
+
+        image = cv.adaptiveThreshold(self.current_image, 1,
+                                     cv.ADAPTIVE_THRESH_MEAN_C,
+                                     cv.THRESH_BINARY, blocksize, cvalue)
+
+        self.current_image = image
+        self.logs.add_log('adaptive threshold bubble detection {} -> {} '
+                          '- opencv'.format(threshold[0], threshold[1]))
         return image
 
     def dilate_opencv(self, footprintsize=3):
