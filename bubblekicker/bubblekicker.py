@@ -221,4 +221,5 @@ class BubbleKicker(object):
         """plot the current image"""
         fig, ax = plt.subplots()
         ax.imshow(self.current_image, cmap=plt.cm.gray)
+        ax.set_title(self.logs.log[-1])
         return fig, ax
