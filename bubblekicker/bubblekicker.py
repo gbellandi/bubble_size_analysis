@@ -3,6 +3,8 @@ S. Van Hoey
 2016-06-06
 """
 
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -47,9 +49,38 @@ class Logger(object):
         self.log = []
 
 
+def batchbubblekicker(data_path, channel, pipeline, *args):
+    """
+    Given a folder with processable files and a channel to use, a sequence
+    of steps class as implemented in the pipelines.py file will be applied on
+    each of the individual images
+
+    :param data_path: folder containing images to process
+    :param channel: green | red | blue
+    :param pipeline: class from pipelines.py to use as processing sequence
+    :param args: arguments required by the pipeline
+    :return: dictionary with for each file the output binary image
+    """
+    results = {}
+
+    for imgfile in os.listdir(data_path):
+        current_bubbler = pipeline(os.path.join(data_path, imgfile),
+                                   channel=channel)
+        results[imgfile] = current_bubbler.run(*args)
+    return results
+
+
 class BubbleKicker(object):
 
     def __init__(self, filename, channel='red'):
+        """
+        This class contains a set of functions that can be applied to a
+        bubble image in order to derive a binary bubble-image and calculate the
+        statistics/distribution
+
+        :param filename: image file name
+        :param channel: green | red | blue
+        """
 
         self.raw_file = self._read_image(filename)
         self.logs = Logger()
@@ -120,7 +151,7 @@ class BubbleKicker(object):
 
         self.current_image = image
         self.logs.add_log('adaptive threshold bubble detection '
-                          'with blocksize {} and cvalue {}'
+                          'with blocksize {} and cvalue {} '
                           '- opencv'.format(blocksize, cvalue))
         return image
 
@@ -211,7 +242,8 @@ class BubbleKicker(object):
         return ret, markers
 
     def what_have_i_done(self):
-        """ print the current log statements"""
+        """ print the current log statements as a sequence of
+        performed steps"""
         self.logs.print_log_sequence()
 
     def plot(self):
@@ -233,7 +265,3 @@ class BubbleKicker(object):
         # as this makes it more general
         return None
 
-class BatchBubbleKicker(object):
-
-    def __init__(self, folder, channel='red'):
-        pass

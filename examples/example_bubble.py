@@ -1,7 +1,9 @@
 
+import os
+
 import matplotlib.pyplot as plt
 
-from bubblekicker.bubblekicker import BubbleKicker
+from bubblekicker.bubblekicker import BubbleKicker, batchbubblekicker
 from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
 
 ###############
@@ -59,3 +61,11 @@ bubbler.what_have_i_done()
 
 plt.show()
 
+###############
+# EXAMPLE 3: running a batch sequence
+###############
+
+res = batchbubblekicker('examples/data', 'red',
+                        AdaptiveThresholdPipeline,
+                        91, 18, 3, 1, 1)
+print(res)
