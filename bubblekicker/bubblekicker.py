@@ -38,7 +38,7 @@ class Logger(object):
         return self.log[-1]
 
     def print_log_sequence(self):
-        print(self.log, sep='\n')
+        print("\n".join(self.log))
 
 
 class BubbleKicker(object):
@@ -66,7 +66,8 @@ class BubbleKicker(object):
     def _channel_control(channel):
         """check if channel is either red, green, blue"""
         if channel not in ['red', 'green', 'blue']:
-            raise NotAllowedChannel('Not a valid channel for RGB color scheme!')
+            raise NotAllowedChannel('Not a valid channel for '
+                                    'RGB color scheme!')
 
     def edge_detect_opencv(self, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image using
@@ -77,7 +78,8 @@ class BubbleKicker(object):
                          threshold[1])
 
         self.current_image = image
-        self.logs.add_log('edge-detect - opencv')
+        self.logs.add_log('edge-detect with thresholds {} -> {} '
+                          '- opencv'.format(threshold[0], threshold[1]))
         return image
 
     def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
@@ -90,7 +92,11 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('edge-detect - skimage')
+        self.logs.add_log('edge-detect with '
+                          'thresholds {} -> {} and sigma {} '
+                          '- skimage'.format(threshold[0],
+                                             threshold[1],
+                                             sigma))
         return image
 
     def dilate_opencv(self, footprintsize=3):
@@ -107,7 +113,8 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('dilate - opencv')
+        self.logs.add_log('dilate with footprintsize {} '
+                          '- opencv'.format(footprintsize))
         return image
 
     def dilate_skimage(self):
@@ -153,7 +160,8 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('clear border -  skimage')
+        self.logs.add_log('clear border with buffer size {} and bgval {} '
+                          '-  skimage'.format(buffer_size, bgval))
         return image
 
     def erode_opencv(self, footprintsize=1):
@@ -166,7 +174,8 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('erode - opencv')
+        self.logs.add_log('erode with footprintsize {} '
+                          '- opencv'.format(footprintsize))
         return image
 
     def label_bubbles(self):
