@@ -1,1 +1,1 @@
-from bubblekicker import BubbleKicker
+from bubblekicker.bubblekicker import BubbleKicker
