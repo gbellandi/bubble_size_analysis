@@ -3,35 +3,45 @@ import matplotlib.pyplot as plt
 
 from bubblekicker.bubblekicker import BubbleKicker
 
-# setup the image handling object
-import os
-print(os.listdir("./"))
+###############
+# EXAMPLE 1: pipeline ass such
+###############
 
-my_image = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
-
-
+# bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
 #
-my_image.perform_pipeline_opencv([100, 150], 3, 3, 1, 1)
-
-
-# edge detect
-#my_image.edge_detect_skimage(3, threshold=[None, None])
-my_image.plot()
-my_image.what_have_i_done()
-
-
-# fig, ax = plt.subplots()
-# ax.imshow(my_image.current_image, cmap=plt.cm.gray)
-# ax.set_title("edges detected")
+# bubbler.perform_pipeline_opencv([120, 180], 3, 3, 1, 1)
 #
-# # Dilate
-# my_image.dilate_skimage()
+# # show the resulting image of the detected bubbles
+# bubbler.plot()
 #
-# fig, ax = plt.subplots()
-# ax.imshow(my_image.current_image, cmap=plt.cm.gray)
-# ax.set_title("dilated image")
+# # show the individual steps performed to get this result
+# bubbler.what_have_i_done()
 
+###############
+# EXAMPLE 2: individual dequence
+###############
 
-#...
+# setup the object
+bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
+# using functions (both opencv as skimage are available)
+bubbler.edge_detect_opencv([30, 80])
+bubbler.dilate_opencv(3)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
+
+# retry another sequence => reset the image
+bubbler.reset_to_raw()
+
+# some alternative settings
+bubbler.edge_detect_opencv([100, 150])
+bubbler.dilate_opencv(3)
+bubbler.clear_border_skimage(3, 1)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+# this is the list since the reset to raw
+bubbler.what_have_i_done()
 
 plt.show()
