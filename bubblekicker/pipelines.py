@@ -23,7 +23,8 @@ class CannyPipeline(BubbleKicker):
 class AdaptiveThresholdPipeline(BubbleKicker):
 
     def __init__(self, filename, channel='red'):
-        super(CannyPipeline, self).__init__(filename, channel=channel)
+        super(AdaptiveThresholdPipeline, self).__init__(filename,
+                                                        channel=channel)
 
     def run(self, blocksize, cvalue, border_buffer_size,
             border_bgval, erode_footprint):
