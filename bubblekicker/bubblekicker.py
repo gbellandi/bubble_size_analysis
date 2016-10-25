@@ -4,6 +4,7 @@ S. Van Hoey
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from skimage.data import imread
 from skimage.feature import canny
@@ -22,11 +23,30 @@ class NotAllowedChannel(Exception):
     pass
 
 
+class Logger(object):
+    """
+    Log the sequence of log statements performed
+    """
+    def __init__(self):
+        self.log = []
+
+    def add_log(self, message):
+        """add a log statement to the sequence"""
+        self.log.append(message)
+
+    def get_last_log(self):
+        return self.log[-1]
+
+    def print_log_sequence(self):
+        print(self.log, sep='\n')
+
+
 class BubbleKicker(object):
 
     def __init__(self, filename, channel='red'):
 
         self.raw_file = self._read_image(filename)
+        self.logs = Logger()
 
         self._channel_control(channel)
         self._channel = channel
@@ -57,6 +77,7 @@ class BubbleKicker(object):
                          high_threshold=threshold[1])
 
         self.current_image = image
+        self.logs.add_log('edge-detect, opencv')
         return image
 
     def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
@@ -67,6 +88,9 @@ class BubbleKicker(object):
                       high_threshold=threshold[1])
 
         self.current_image = image
+
+        # append function to logs
+        self.logs.add_log('edge-detect, skimage')
         return image
 
     def dilate_opencv(self, footprintsize=3):
@@ -81,6 +105,9 @@ class BubbleKicker(object):
 
         # update current image
         self.current_image = image
+
+        # append function to logs
+        self.logs.add_log('dilate, opencv')
         return image
 
     def dilate_skimage(self):
@@ -95,6 +122,12 @@ class BubbleKicker(object):
         image = dilation(self.current_image, selem=struct_env,
                          out=self.current_image)
 
+        # update current image
+        self.current_image = image
+
+        # append function to logs
+        self.logs.add_log('dilate, skimage')
+
         return image
 
     def fill_holes_opencv(self):
@@ -107,6 +140,9 @@ class BubbleKicker(object):
 
         # update current image
         self.current_image = image
+
+        # append function to logs
+        self.logs.add_log('fill holes, opencv')
         return image
 
     def clear_border_skimage(self, buffer_size=3, bgval=1):
@@ -118,8 +154,10 @@ class BubbleKicker(object):
 
         # update current image
         self.current_image = image
-        return image
 
+        # append function to logs
+        self.logs.add_log('clear border, skimage')
+        return image
 
     def erode_opencv(self, footprintsize=1):
         """erode the image"""
@@ -129,6 +167,9 @@ class BubbleKicker(object):
 
         # update current image
         self.current_image = image
+
+        # append function to logs
+        self.logs.add_log('erode, opencv')
         return image
 
     def label_bubbles(self):
@@ -155,3 +196,13 @@ class BubbleKicker(object):
         self.erode_opencv(erode_footprint)
 
         return self.current_image
+
+    def what_have_i_done(self):
+        """ print the current log statements"""
+        self.logs.print_log_sequence()
+
+    def plot(self):
+        """plot the current image"""
+        fig, ax = plt.subplots()
+        ax.imshow(self.current_image, cmap=plt.cm.gray)
+        return fig, ax
