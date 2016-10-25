@@ -110,7 +110,7 @@ class BubbleKicker(object):
                                              sigma))
         return image
 
-    def adaptive_threshold_opencv(self, blocksize=92, cvalue=18):
+    def adaptive_threshold_opencv(self, blocksize=91, cvalue=18):
         """perform the edge detection algorithm of Canny on the image using
         the openCV package"""
 
@@ -119,8 +119,9 @@ class BubbleKicker(object):
                                      cv.THRESH_BINARY, blocksize, cvalue)
 
         self.current_image = image
-        self.logs.add_log('adaptive threshold bubble detection {} -> {} '
-                          '- opencv'.format(threshold[0], threshold[1]))
+        self.logs.add_log('adaptive threshold bubble detection '
+                          'with blocksize {} and cvalue {}'
+                          '- opencv'.format(blocksize, cvalue))
         return image
 
     def dilate_opencv(self, footprintsize=3):
@@ -214,7 +215,7 @@ class BubbleKicker(object):
                                 erode_footprint):
         """execute the different algorithms as a pipeline
         with given settings"""
-        self.edge_detect_opencv(threshold)
+        self.edge_detect_canny_opencv(threshold)
         self.dilate_opencv(dilate_footprint)
         self.fill_holes_opencv()
         self.clear_border_skimage(border_buffer_size, border_bgval)
