@@ -61,7 +61,6 @@ class BubbleKicker(object):
 
     def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image"""
-
         image = canny(self.current_image,
                       sigma=sigma,
                       low_threshold=threshold[0],
@@ -120,6 +119,7 @@ class BubbleKicker(object):
         # update current image
         self.current_image = image
         return image
+
 
     def erode_opencv(self, footprintsize=1):
         """erode the image"""
