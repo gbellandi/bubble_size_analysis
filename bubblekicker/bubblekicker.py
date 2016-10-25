@@ -46,6 +46,7 @@ class Logger(object):
         """clear all the logs"""
         self.log = []
 
+
 class BubbleKicker(object):
 
     def __init__(self, filename, channel='red'):
@@ -195,12 +196,7 @@ class BubbleKicker(object):
 
         return ret, markers
 
-    def calculate_properties(self):
-        """calculate the required statistics"""
-        # regionprops
-        return None
-
-    def perform_pipeline_opencv(self, threshold, dilate_footprint,
+    def perform_pipeline_canny(self, threshold, dilate_footprint,
                                 border_buffer_size, border_bgval,
                                 erode_footprint):
         """execute the different algorithms as a pipeline
@@ -223,3 +219,20 @@ class BubbleKicker(object):
         ax.imshow(self.current_image, cmap=plt.cm.gray)
         ax.set_title(self.logs.log[-1])
         return fig, ax
+
+    def calculate_properties(self):
+        """calculate the required statistics"""
+        # regionprops
+        return None
+
+    def calculate_distribution(self):
+        """calculate and create the distribution plot"""
+        # using the elf.current_image => calculate and derive distribution plot
+        # you could opt to have the plot function itself outside the class
+        # as this makes it more general
+        return None
+
+class BatchBubbleKicker(object):
+
+    def __init__(self, folder, channel='red'):
+        pass
