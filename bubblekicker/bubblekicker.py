@@ -73,11 +73,11 @@ class BubbleKicker(object):
         the openCV package"""
 
         image = cv.Canny(self.current_image,
-                         low_threshold=threshold[0],
-                         high_threshold=threshold[1])
+                         threshold[0],
+                         threshold[1])
 
         self.current_image = image
-        self.logs.add_log('edge-detect, opencv')
+        self.logs.add_log('edge-detect - opencv')
         return image
 
     def edge_detect_skimage(self, sigma=3, threshold=[0.01, 0.5]):
@@ -90,7 +90,7 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('edge-detect, skimage')
+        self.logs.add_log('edge-detect - skimage')
         return image
 
     def dilate_opencv(self, footprintsize=3):
@@ -107,7 +107,7 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('dilate, opencv')
+        self.logs.add_log('dilate - opencv')
         return image
 
     def dilate_skimage(self):
@@ -126,24 +126,21 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('dilate, skimage')
+        self.logs.add_log('dilate - skimage')
 
         return image
 
     def fill_holes_opencv(self):
         """fill the holes of the image"""
-
         # perform algorithm
         h, w = self.current_image.shape[:2]  # stores image sizes
         mask = np.zeros((h + 2, w + 2), np.uint8)
-        image = cv.floodFill(self.current_image, mask, (0, 0), 0)
-
-        # update current image
-        self.current_image = image
+        # floodfill operates on the saved image itself
+        cv.floodFill(self.current_image, mask, (0, 0), 0)
 
         # append function to logs
-        self.logs.add_log('fill holes, opencv')
-        return image
+        self.logs.add_log('fill holes - opencv')
+        return self.current_image
 
     def clear_border_skimage(self, buffer_size=3, bgval=1):
         """clear the borders of the image"""
@@ -156,7 +153,7 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('clear border, skimage')
+        self.logs.add_log('clear border -  skimage')
         return image
 
     def erode_opencv(self, footprintsize=1):
@@ -169,7 +166,7 @@ class BubbleKicker(object):
         self.current_image = image
 
         # append function to logs
-        self.logs.add_log('erode, opencv')
+        self.logs.add_log('erode - opencv')
         return image
 
     def label_bubbles(self):
@@ -189,7 +186,7 @@ class BubbleKicker(object):
                                 erode_footprint):
         """execute the different algorithms as a pipeline
         with given settings"""
-        self.edge_detect_image(threshold)
+        self.edge_detect_opencv(threshold)
         self.dilate_opencv(dilate_footprint)
         self.fill_holes_opencv()
         self.clear_border_skimage(border_buffer_size, border_bgval)
