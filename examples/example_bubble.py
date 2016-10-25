@@ -7,15 +7,15 @@ from bubblekicker.bubblekicker import BubbleKicker
 # EXAMPLE 1: pipeline ass such
 ###############
 
-# bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
-#
-# bubbler.perform_pipeline_opencv([120, 180], 3, 3, 1, 1)
-#
-# # show the resulting image of the detected bubbles
-# bubbler.plot()
-#
-# # show the individual steps performed to get this result
-# bubbler.what_have_i_done()
+bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
+
+bubbler.perform_pipeline_canny([120, 180], 3, 3, 1, 1)
+
+# show the resulting image of the detected bubbles
+bubbler.plot()
+
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
 
 ###############
 # EXAMPLE 2: individual dequence
