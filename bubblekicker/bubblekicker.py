@@ -38,8 +38,13 @@ class Logger(object):
         return self.log[-1]
 
     def print_log_sequence(self):
+        print("Steps undertaken since from raw image:")
         print("\n".join(self.log))
+        print("\n")
 
+    def clear_log(self):
+        """clear all the logs"""
+        self.log = []
 
 class BubbleKicker(object):
 
@@ -61,6 +66,11 @@ class BubbleKicker(object):
         """
         image = imread(filename)
         return image
+
+    def reset_to_raw(self):
+        """make the current image again the raw image"""
+        self.current_image = self.raw_image.copy()
+        self.logs.clear_log()
 
     @staticmethod
     def _channel_control(channel):
