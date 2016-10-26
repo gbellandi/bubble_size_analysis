@@ -9,5 +9,6 @@ setup(
     author='Giacomo Bellandi, Stijn Van Hoey',
     author_email='',
     description='',
-    install_requires=['matplotlib', 'scikit-image', 'opencv', 'numpy']
+    install_requires=['matplotlib', 'scikit-image',
+                      'opencv', 'numpy', 'pandas']
 )
