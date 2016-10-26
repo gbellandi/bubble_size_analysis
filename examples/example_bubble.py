@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 
-from bubblekicker.bubblekicker import BubbleKicker, batchbubblekicker
+from bubblekicker.bubblekicker import (BubbleKicker, batchbubblekicker,
+                                       bubble_properties_calculate,
+                                       bubble_properties_filter,
+                                       bubble_properties_plot)
+
 from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
 
 ###############
@@ -82,14 +86,14 @@ bubbler.plot()
 # derive the bubble properties as a table
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
-bubbler.show_distribution()
+nbubbles, marker_image, props = bubble_properties_calculate(result)
+bubble_properties_plot(props)
 
 # filter bubble properties based on a DEFAULT filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
-filtered_bubbles = bubbler.filter_bubble_properties()
+nbubbles, marker_image, props = bubble_properties_calculate(result)
+filtered_bubbles = bubble_properties_filter(props)
 print(filtered_bubbles)
 
 # filter bubble properties based on CUSTOM filter ruleset
@@ -97,8 +101,8 @@ custom_filter = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
                  'convexity': {'min': 1.92}}
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
-filtered_bubbles = bubbler.filter_bubble_properties(custom_filter)
+nbubbles, marker_image, props = bubble_properties_calculate(result)
+filtered_bubbles = bubble_properties_filter(props, custom_filter)
 print(filtered_bubbles)
 
 plt.show()

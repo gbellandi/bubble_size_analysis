@@ -98,8 +98,6 @@ class BubbleKicker(object):
         self.raw_image = self.raw_file[:, :, CHANNEL_CODE[self._channel]]
         self.current_image = self.raw_image.copy()
 
-        self.bubble_properties = None
-
     @staticmethod
     def _read_image(filename):
         """read the image from a file and store
@@ -269,60 +267,64 @@ class BubbleKicker(object):
             ax.set_title(self.logs.log[-1])
         return fig, ax
 
-    def calculate_bubble_properties(self):
-        """provide a label for each bubble in the image"""
 
-        nbubbles, marker_image = cv.connectedComponents(1 - self.current_image)
-        props = regionprops(marker_image)
-        bubble_properties = \
-            pd.DataFrame([{"label": bubble.label,
-                           "area": bubble.area,
-                           "centroid": bubble.centroid,
-                           "convex_area": bubble.convex_area,
-                           "equivalent_diameter": bubble.equivalent_diameter,
-                           "perimeter": bubble.perimeter} for bubble in props])
+def bubble_properties_calculate(binary_image):
+    """provide a label for each bubble in the image"""
 
-        bubble_properties["convexity"] = \
-            calculate_convexity(bubble_properties["perimeter"],
-                                bubble_properties["area"])
-        bubble_properties["circularity_reciprocal"] = \
-            calculate_circularity_reciprocal(bubble_properties["perimeter"],
-                                             bubble_properties["area"])
+    nbubbles, marker_image = cv.connectedComponents(1 - binary_image)
+    props = regionprops(marker_image)
+    bubble_properties = \
+        pd.DataFrame([{"label": bubble.label,
+                       "area": bubble.area,
+                       "centroid": bubble.centroid,
+                       "convex_area": bubble.convex_area,
+                       "equivalent_diameter": bubble.equivalent_diameter,
+                       "perimeter": bubble.perimeter} for bubble in props])
 
-        bubble_properties = bubble_properties.set_index("label")
-        self.bubble_properties = bubble_properties.copy()
+    bubble_properties["convexity"] = \
+        calculate_convexity(bubble_properties["perimeter"],
+                            bubble_properties["area"])
+    bubble_properties["circularity_reciprocal"] = \
+        calculate_circularity_reciprocal(bubble_properties["perimeter"],
+                                         bubble_properties["area"])
 
-        return nbubbles, marker_image, bubble_properties
+    bubble_properties = bubble_properties.set_index("label")
 
-    def filter_bubble_properties(self, rules=DEFAULT_FILTERS):
-        """exclude bubbles based on a set of rules
+    return nbubbles, marker_image, bubble_properties
 
-        :return:
-        """
-        bubble_props = self.bubble_properties.copy()
-        for prop_name, ruleset in rules.items():
-            print(ruleset)
-            for rule, value in ruleset.items():
-                if rule == 'min':
-                    bubble_props = \
-                        bubble_props[bubble_props[prop_name] > value]
-                elif rule == 'max':
-                    bubble_props = \
-                        bubble_props[bubble_props[prop_name] < value]
-                else:
-                    raise Exception("Rule not supported, "
-                                    "use min or max as filter")
-        return bubble_props
 
-    def show_distribution(self, which_property="equivalent_diameter",
-                          bins=20):
-        """calculate and create the distribution plot"""
-        # using the elf.current_image => calculate and derive distribution plot
-        # you could opt to have the plot function itself outside the class
-        # as this makes it more general
-        fig, ax = plt.subplots()
-        n, bins, patches = ax.hist(self.bubble_properties[which_property],
-                                   bins, normed=1, cumulative=True)
+def bubble_properties_filter(property_table,
+                             rules=DEFAULT_FILTERS):
+    """exclude bubbles based on a set of rules
 
-        return fig, ax
+    :return:
+    """
+    bubble_props = property_table.copy()
+    for prop_name, ruleset in rules.items():
+        print(ruleset)
+        for rule, value in ruleset.items():
+            if rule == 'min':
+                bubble_props = \
+                    bubble_props[bubble_props[prop_name] > value]
+            elif rule == 'max':
+                bubble_props = \
+                    bubble_props[bubble_props[prop_name] < value]
+            else:
+                raise Exception("Rule not supported, "
+                                "use min or max as filter")
+    return bubble_props
+
+
+def bubble_properties_plot(property_table,
+                           which_property="equivalent_diameter",
+                           bins=20):
+    """calculate and create the distribution plot"""
+    # using the elf.current_image => calculate and derive distribution plot
+    # you could opt to have the plot function itself outside the class
+    # as this makes it more general
+    fig, ax = plt.subplots()
+    n, bins, patches = ax.hist(property_table[which_property],
+                               bins, normed=1, cumulative=True)
+
+    return fig, ax
 
