@@ -17,6 +17,9 @@ from skimage.measure import regionprops
 
 import cv2 as cv
 
+from bubblekicker.utils import (calculate_convexity,
+                                calculate_circularity_reciprocal)
+
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
 
 
@@ -249,23 +252,6 @@ class BubbleKicker(object):
                           '- opencv'.format(footprintsize))
         return image
 
-    def calculate_bubble_properties(self):
-        """provide a label for each bubble in the image"""
-
-        nbubbles, marker_image = cv.connectedComponents(1 - self.current_image)
-        props = regionprops(marker_image)
-        bubble_properties = \
-            pd.DataFrame([{"label": bubble.label,
-                           "area": bubble.area,
-                           "centroid": bubble.centroid,
-                           "convex_area": bubble.convex_area,
-                           "equivalent_diameter": bubble.equivalent_diameter,
-                           "perimeter": bubble.perimeter} for bubble in props])
-
-        bubble_properties = bubble_properties.set_index("label")
-
-        return nbubbles, marker_image, bubble_properties
-
     def what_have_i_done(self):
         """ print the current log statements as a sequence of
         performed steps"""
@@ -279,12 +265,31 @@ class BubbleKicker(object):
             ax.set_title(self.logs.log[-1])
         return fig, ax
 
-    def calculate_properties(self):
-        """calculate the required statistics"""
-        # regionprops
-        return None
+    def calculate_bubble_properties(self):
+        """provide a label for each bubble in the image"""
 
-    def calculate_distribution(self):
+        nbubbles, marker_image = cv.connectedComponents(1 - self.current_image)
+        props = regionprops(marker_image)
+        bubble_properties = \
+            pd.DataFrame([{"label": bubble.label,
+                           "area": bubble.area,
+                           "centroid": bubble.centroid,
+                           "convex_area": bubble.convex_area,
+                           "equivalent_diameter": bubble.equivalent_diameter,
+                           "perimeter": bubble.perimeter} for bubble in props])
+
+        bubble_properties["convexity"] = \
+            calculate_convexity(bubble_properties["perimeter"],
+                                bubble_properties["area"])
+        bubble_properties["circularity_reciprocal"] = \
+            calculate_circularity_reciprocal(bubble_properties["perimeter"],
+                                             bubble_properties["area"])
+
+        bubble_properties = bubble_properties.set_index("label")
+
+        return nbubbles, marker_image, bubble_properties
+
+    def show_distribution(self, bubble_property="convex_area"):
         """calculate and create the distribution plot"""
         # using the elf.current_image => calculate and derive distribution plot
         # you could opt to have the plot function itself outside the class

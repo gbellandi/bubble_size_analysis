@@ -70,6 +70,7 @@ print(res)
 # EXAMPLE 4: Some other functions
 ###############
 
+# switch color channel
 bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
 print(bubbler.what_channel())
 bubbler.plot()
@@ -77,6 +78,14 @@ bubbler.plot()
 bubbler.switch_channel('green')
 print(bubbler.what_channel())
 bubbler.plot()
+
+# derive the bubble properties as a table
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
+print(nbubbles)
+print(props.head())
+plt.imshow(marker_image)
 
 
 plt.show()
