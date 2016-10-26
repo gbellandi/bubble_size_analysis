@@ -8,6 +8,7 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
 from skimage.data import imread
 from skimage.feature import canny
@@ -319,12 +320,37 @@ def bubble_properties_plot(property_table,
                            which_property="equivalent_diameter",
                            bins=20):
     """calculate and create the distribution plot"""
-    # using the elf.current_image => calculate and derive distribution plot
-    # you could opt to have the plot function itself outside the class
-    # as this makes it more general
-    fig, ax = plt.subplots()
-    n, bins, patches = ax.hist(property_table[which_property],
-                               bins, normed=1, cumulative=True)
+    fontsize_labels = 14.
+    formatter = FuncFormatter(
+        lambda y, pos: "{:d}%".format(int(round(y * 100))))
 
-    return fig, ax
+    fig, ax1 = plt.subplots()
+    ax1.hist(property_table[which_property], bins,
+             normed=1, cumulative=False, histtype='bar',
+             color='gray', ec='white')
+    ax1.get_xaxis().tick_bottom()
+
+    # left axis - histogram
+    ax1.yaxis.set_major_formatter(formatter)
+    ax1.set_ylabel(r'Percentage (%)', color='gray',
+                   fontsize=fontsize_labels)
+    ax1.spines['top'].set_visible(False)
+
+    # right axis - cumul distribution
+    ax2 = ax1.twinx()
+    ax2.hist(property_table[which_property],
+             bins, normed=1, cumulative=True,
+             histtype='step', color='k', linewidth= 3.)
+    ax2.yaxis.set_major_formatter(formatter)
+    ax2.set_ylabel(r'Cumulative percentage (%)', color='k',
+                   fontsize=fontsize_labels)
+    ax2.spines['top'].set_visible(False)
+
+    # additional options
+    ax1.set_xlim(0, property_table[which_property].max())
+    ax1.tick_params(axis='x', which='both', pad=10)
+    ax1.set_xlabel(which_property)
+
+    return fig, (ax1, ax2)
+
 

@@ -83,11 +83,14 @@ bubbler.switch_channel('green')
 print(bubbler.what_channel())
 bubbler.plot()
 
-# derive the bubble properties as a table
+# derive and PLOT the bubble properties as a table
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
 nbubbles, marker_image, props = bubble_properties_calculate(result)
-bubble_properties_plot(props)
+fig, axs = bubble_properties_plot(props, "equivalent_diameter")
+fig.savefig("examples/output_eq_diameter.png")
+fig, axs = bubble_properties_plot(props, "area")
+fig.savefig("examples/output_area.png")
 
 # filter bubble properties based on a DEFAULT filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
