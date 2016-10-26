@@ -236,7 +236,7 @@ class BubbleKicker(object):
 
     def label_bubbles(self):
         """provide a label for each bubble in the image"""
-
+ 
         ret, markers = cv.connectedComponents(1 - self.current_image)
 
         return ret, markers

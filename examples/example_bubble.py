@@ -1,6 +1,3 @@
-
-import os
-
 import matplotlib.pyplot as plt
 
 from bubblekicker.bubblekicker import BubbleKicker, batchbubblekicker
