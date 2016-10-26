@@ -104,6 +104,19 @@ class BubbleKicker(object):
         self.current_image = self.raw_image.copy()
         self.logs.clear_log()
 
+    def switch_channel(self, channel):
+        """change the channel"""
+        self._channel_control(channel)
+        self._channel = channel
+        self.raw_image = self.raw_file[:, :, CHANNEL_CODE[self._channel]]
+        self.current_image = self.raw_image.copy()
+        self.logs.clear_log()
+        print("Currently using channel {}".format(self._channel))
+
+    def what_channel(self):
+        """check the current working channel"""
+        print(self._channel)
+
     @staticmethod
     def _channel_control(channel):
         """check if channel is either red, green, blue"""
@@ -250,7 +263,8 @@ class BubbleKicker(object):
         """plot the current image"""
         fig, ax = plt.subplots()
         ax.imshow(self.current_image, cmap=plt.cm.gray)
-        ax.set_title(self.logs.log[-1])
+        if len(self.logs.log) > 0:
+            ax.set_title(self.logs.log[-1])
         return fig, ax
 
     def calculate_properties(self):

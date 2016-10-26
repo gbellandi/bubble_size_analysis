@@ -56,8 +56,6 @@ bubbler.clear_border_skimage()
 bubbler.plot()
 bubbler.what_have_i_done()
 
-plt.show()
-
 ###############
 # EXAMPLE 3: running a batch sequence
 ###############
@@ -66,3 +64,19 @@ res = batchbubblekicker('examples/data', 'red',
                         AdaptiveThresholdPipeline,
                         91, 18, 3, 1, 1)
 print(res)
+
+
+###############
+# EXAMPLE 4: Some other functions
+###############
+
+bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
+print(bubbler.what_channel())
+bubbler.plot()
+
+bubbler.switch_channel('green')
+print(bubbler.what_channel())
+bubbler.plot()
+
+
+plt.show()
