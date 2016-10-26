@@ -83,9 +83,22 @@ bubbler.plot()
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
 nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
-print(nbubbles)
-print(props.head())
-plt.imshow(marker_image)
+bubbler.show_distribution()
 
+# filter bubble properties based on a DEFAULT filter
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
+filtered_bubbles = bubbler.filter_bubble_properties()
+print(filtered_bubbles)
+
+# filter bubble properties based on CUSTOM filter ruleset
+custom_filter = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
+                 'convexity': {'min': 1.92}}
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+nbubbles, marker_image, props = bubbler.calculate_bubble_properties()
+filtered_bubbles = bubbler.filter_bubble_properties(custom_filter)
+print(filtered_bubbles)
 
 plt.show()

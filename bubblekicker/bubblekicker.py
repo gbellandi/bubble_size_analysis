@@ -21,6 +21,8 @@ from bubblekicker.utils import (calculate_convexity,
                                 calculate_circularity_reciprocal)
 
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
+DEFAULT_FILTERS = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
+                   'convexity': {'min': 0.92}}
 
 
 class NotAllowedChannel(Exception):
@@ -95,6 +97,8 @@ class BubbleKicker(object):
 
         self.raw_image = self.raw_file[:, :, CHANNEL_CODE[self._channel]]
         self.current_image = self.raw_image.copy()
+
+        self.bubble_properties = None
 
     @staticmethod
     def _read_image(filename):
@@ -286,13 +290,39 @@ class BubbleKicker(object):
                                              bubble_properties["area"])
 
         bubble_properties = bubble_properties.set_index("label")
+        self.bubble_properties = bubble_properties.copy()
 
         return nbubbles, marker_image, bubble_properties
 
-    def show_distribution(self, bubble_property="convex_area"):
+    def filter_bubble_properties(self, rules=DEFAULT_FILTERS):
+        """exclude bubbles based on a set of rules
+
+        :return:
+        """
+        bubble_props = self.bubble_properties.copy()
+        for prop_name, ruleset in rules.items():
+            print(ruleset)
+            for rule, value in ruleset.items():
+                if rule == 'min':
+                    bubble_props = \
+                        bubble_props[bubble_props[prop_name] > value]
+                elif rule == 'max':
+                    bubble_props = \
+                        bubble_props[bubble_props[prop_name] < value]
+                else:
+                    raise Exception("Rule not supported, "
+                                    "use min or max as filter")
+        return bubble_props
+
+    def show_distribution(self, which_property="equivalent_diameter",
+                          bins=20):
         """calculate and create the distribution plot"""
         # using the elf.current_image => calculate and derive distribution plot
         # you could opt to have the plot function itself outside the class
         # as this makes it more general
-        return None
+        fig, ax = plt.subplots()
+        n, bins, patches = ax.hist(self.bubble_properties[which_property],
+                                   bins, normed=1, cumulative=True)
+
+        return fig, ax
 
