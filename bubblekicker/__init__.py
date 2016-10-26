@@ -1,1 +1,2 @@
-from bubblekicker import BubbleKicker
+from bubblekicker.bubblekicker import BubbleKicker
+from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline

@@ -1,29 +1,68 @@
-
 import matplotlib.pyplot as plt
 
-from bubblekicker import BubbleKicker
+from bubblekicker.bubblekicker import BubbleKicker, batchbubblekicker
+from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
 
-# setup the image handling object
-import os
-print(os.listdir("./"))
+###############
+# EXAMPLE 1: pipeline ass such
+###############
 
-my_image = BubbleKicker('Bubble_test_053.bmp', channel='red')
+# CANNY PIPELINE
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
 
-# edge detect
-my_image.edge_detect_image(3, threshold=[None, None])
+# ADAPTIVE THRESHOLD PIPELINE
+bubbler = AdaptiveThresholdPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run(91, 18, 3, 1, 1)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
 
-fig, ax = plt.subplots()
-ax.imshow(my_image.current_image, cmap=plt.cm.gray)
-ax.set_title("edges detected")
+###############
+# EXAMPLE 2: individual dequence
+###############
 
-# Dilate
-my_image.dilate_image()
+# setup the object
+bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
+# using functions (both opencv as skimage are available)
+bubbler.edge_detect_canny_opencv([30, 80])
+bubbler.dilate_opencv(3)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+bubbler.what_have_i_done()
 
-fig, ax = plt.subplots()
-ax.imshow(my_image.current_image, cmap=plt.cm.gray)
-ax.set_title("dilated image")
+# retry another sequence => reset the image
+bubbler.reset_to_raw()
 
+# some alternative settings
+bubbler.edge_detect_canny_opencv([100, 150])
+bubbler.dilate_opencv(3)
+bubbler.clear_border_skimage(3, 1)
+# show the resulting image of the detected bubbles
+bubbler.plot()
+# show the individual steps performed to get this result
+# this is the list since the reset to raw
+bubbler.what_have_i_done()
 
-#...
+bubbler.reset_to_raw()
+bubbler.adaptive_threshold_opencv()
+bubbler.clear_border_skimage()
+bubbler.plot()
+bubbler.what_have_i_done()
 
 plt.show()
+
+###############
+# EXAMPLE 3: running a batch sequence
+###############
+
+res = batchbubblekicker('examples/data', 'red',
+                        AdaptiveThresholdPipeline,
+                        91, 18, 3, 1, 1)
+print(res)
