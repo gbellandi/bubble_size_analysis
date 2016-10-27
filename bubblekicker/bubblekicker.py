@@ -269,7 +269,7 @@ class BubbleKicker(object):
         return fig, ax
 
 
-def bubble_properties_calculate(binary_image):
+def _bubble_properties_table(binary_image):
     """provide a label for each bubble in the image"""
 
     nbubbles, marker_image = cv.connectedComponents(1 - binary_image)
@@ -294,8 +294,8 @@ def bubble_properties_calculate(binary_image):
     return nbubbles, marker_image, bubble_properties
 
 
-def bubble_properties_filter(property_table,
-                             rules=DEFAULT_FILTERS):
+def _bubble_properties_filter(property_table,
+                              rules=DEFAULT_FILTERS):
     """exclude bubbles based on a set of rules
 
     :return:
@@ -315,6 +315,22 @@ def bubble_properties_filter(property_table,
                                 "use min or max as filter")
     return bubble_props
 
+
+def bubble_properties_calculate(binary_image, rules=DEFAULT_FILTERS)
+    """
+
+    :param binary_image:
+    :param rules:
+    :return:
+    """
+    # get the bubble identifications and properties
+    nbubbles, marker_image, \
+        prop_table = _bubble_properties_table(binary_image)
+    # filter based on the defined rules
+    properties, id_image = _bubble_properties_filter(prop_table,
+                                                     marker_image,
+                                                     rules)
+    return properties, id_image
 
 def bubble_properties_plot(property_table,
                            which_property="equivalent_diameter",
