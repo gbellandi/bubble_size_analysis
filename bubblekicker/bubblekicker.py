@@ -323,16 +323,14 @@ def bubble_properties_plot(property_table,
     fontsize_labels = 14.
     formatter = FuncFormatter(
         lambda y, pos: "{:d}%".format(int(round(y * 100))))
-
     fig, ax1 = plt.subplots()
     ax1.hist(property_table[which_property], bins,
-             normed=1, cumulative=False, histtype='bar',
+             normed=0, cumulative=False, histtype='bar',
              color='gray', ec='white')
     ax1.get_xaxis().tick_bottom()
 
     # left axis - histogram
-    ax1.yaxis.set_major_formatter(formatter)
-    ax1.set_ylabel(r'Percentage (%)', color='gray',
+    ax1.set_ylabel(r'Frequency', color='gray',
                    fontsize=fontsize_labels)
     ax1.spines['top'].set_visible(False)
 
@@ -345,6 +343,7 @@ def bubble_properties_plot(property_table,
     ax2.set_ylabel(r'Cumulative percentage (%)', color='k',
                    fontsize=fontsize_labels)
     ax2.spines['top'].set_visible(False)
+    ax2.set_ylim(0, 1.)
 
     # additional options
     ax1.set_xlim(0, property_table[which_property].max())

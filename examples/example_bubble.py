@@ -87,9 +87,10 @@ bubbler.plot()
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
 nbubbles, marker_image, props = bubble_properties_calculate(result)
-fig, axs = bubble_properties_plot(props, "equivalent_diameter")
+filtered_bubbles = bubble_properties_filter(props)
+fig, axs = bubble_properties_plot(filtered_bubbles, "equivalent_diameter")
 fig.savefig("examples/output_eq_diameter.png")
-fig, axs = bubble_properties_plot(props, "area")
+fig, axs = bubble_properties_plot(filtered_bubbles, "area")
 fig.savefig("examples/output_area.png")
 
 # filter bubble properties based on a DEFAULT filter
