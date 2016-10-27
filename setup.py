@@ -10,5 +10,5 @@ setup(
     author_email='',
     description='',
     install_requires=['matplotlib', 'scikit-image',
-                      'opencv', 'numpy', 'pandas']
+                      'numpy', 'pandas']
 )

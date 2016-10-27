@@ -18,7 +18,7 @@ from skimage.measure import regionprops
 
 import cv2 as cv
 
-from bubblekicker.utils import (calculate_convexity,
+from utils import (calculate_convexity,
                                 calculate_circularity_reciprocal)
 
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
