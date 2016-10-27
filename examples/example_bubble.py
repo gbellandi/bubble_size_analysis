@@ -85,7 +85,7 @@ print(res)
 # derive and PLOT the bubble properties as a table with no filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-props = bubble_properties_calculate(result, rules={})
+id_image, props = bubble_properties_calculate(result, rules={})
 fig, axs = bubble_properties_plot(props, "equivalent_diameter")
 fig.savefig("examples/output_eq_diameter.png")
 fig, axs = bubble_properties_plot(props, "area")
@@ -94,7 +94,7 @@ fig.savefig("examples/output_area.png")
 # filter bubble properties based on a DEFAULT filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-props = bubble_properties_calculate(result)
+id_image, props = bubble_properties_calculate(result)
 print(props)
 
 # filter bubble properties based on CUSTOM filter ruleset
@@ -102,8 +102,7 @@ custom_filter = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
                  'convexity': {'min': 1.92}}
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-props = bubble_properties_calculate(result,
-                                                  rules=custom_filter)
+id_image, props = bubble_properties_calculate(result, rules=custom_filter)
 print(props)
 
 plt.show()

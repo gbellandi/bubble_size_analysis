@@ -294,13 +294,15 @@ def _bubble_properties_table(binary_image):
     return nbubbles, marker_image, bubble_properties
 
 
-def _bubble_properties_filter(property_table,
+def _bubble_properties_filter(property_table, id_image,
                               rules=DEFAULT_FILTERS):
     """exclude bubbles based on a set of rules
 
     :return:
     """
     bubble_props = property_table.copy()
+    all_ids = bubble_props.index.tolist()
+
     for prop_name, ruleset in rules.items():
         print(ruleset)
         for rule, value in ruleset.items():
@@ -313,7 +315,13 @@ def _bubble_properties_filter(property_table,
             else:
                 raise Exception("Rule not supported, "
                                 "use min or max as filter")
-    return bubble_props
+
+    removed_ids = [el for el in all_ids if el
+                   not in bubble_props.index.tolist()]
+    for idb in removed_ids:
+        id_image[id_image == idb] = 0
+
+    return id_image, bubble_props
 
 
 def bubble_properties_calculate(binary_image,
@@ -325,11 +333,12 @@ def bubble_properties_calculate(binary_image,
     :return:
     """
     # get the bubble identifications and properties
-    nbubbles, marker_image, \
+    nbubbles, id_image, \
         prop_table = _bubble_properties_table(binary_image)
     # filter based on the defined rules
-    properties = _bubble_properties_filter(prop_table, rules) #, id_image
-    return properties # id_image,
+    id_image, properties = _bubble_properties_filter(prop_table,
+                                                     id_image, rules)
+    return id_image, properties
 
 
 def bubble_properties_plot(property_table,
