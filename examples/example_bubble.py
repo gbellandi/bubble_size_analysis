@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from bubblekicker.bubblekicker import (BubbleKicker, batchbubblekicker,
                                        bubble_properties_calculate,
-                                       bubble_properties_filter,
+                                       _bubble_properties_filter,
                                        bubble_properties_plot)
 
 from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
@@ -60,20 +60,6 @@ bubbler.clear_border_skimage()
 bubbler.plot()
 bubbler.what_have_i_done()
 
-###############
-# EXAMPLE 3: running a batch sequence
-###############
-
-res = batchbubblekicker('examples/data', 'red',
-                        AdaptiveThresholdPipeline,
-                        91, 18, 3, 1, 1)
-print(res)
-
-
-###############
-# EXAMPLE 4: Some other functions
-###############
-
 # switch color channel
 bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
 print(bubbler.what_channel())
@@ -83,30 +69,41 @@ bubbler.switch_channel('green')
 print(bubbler.what_channel())
 bubbler.plot()
 
-# derive and PLOT the bubble properties as a table
+###############
+# EXAMPLE 3: running a batch sequence
+###############
+
+res = batchbubblekicker('examples/data', 'red',
+                        AdaptiveThresholdPipeline,
+                        91, 18, 3, 1, 1)
+print(res)
+
+###############
+# EXAMPLE 4: Property functions
+###############
+
+# derive and PLOT the bubble properties as a table with no filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubble_properties_calculate(result)
-filtered_bubbles = bubble_properties_filter(props)
-fig, axs = bubble_properties_plot(filtered_bubbles, "equivalent_diameter")
+props = bubble_properties_calculate(result, rules={})
+fig, axs = bubble_properties_plot(props, "equivalent_diameter")
 fig.savefig("examples/output_eq_diameter.png")
-fig, axs = bubble_properties_plot(filtered_bubbles, "area")
+fig, axs = bubble_properties_plot(props, "area")
 fig.savefig("examples/output_area.png")
 
 # filter bubble properties based on a DEFAULT filter
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubble_properties_calculate(result)
-filtered_bubbles = bubble_properties_filter(props)
-print(filtered_bubbles)
+props = bubble_properties_calculate(result)
+print(props)
 
 # filter bubble properties based on CUSTOM filter ruleset
 custom_filter = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
                  'convexity': {'min': 1.92}}
 bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
 result = bubbler.run([120, 180], 3, 3, 1, 1)
-nbubbles, marker_image, props = bubble_properties_calculate(result)
-filtered_bubbles = bubble_properties_filter(props, custom_filter)
-print(filtered_bubbles)
+props = bubble_properties_calculate(result,
+                                                  rules=custom_filter)
+print(props)
 
 plt.show()

@@ -316,7 +316,8 @@ def _bubble_properties_filter(property_table,
     return bubble_props
 
 
-def bubble_properties_calculate(binary_image, rules=DEFAULT_FILTERS)
+def bubble_properties_calculate(binary_image,
+                                rules=DEFAULT_FILTERS):
     """
 
     :param binary_image:
@@ -327,10 +328,9 @@ def bubble_properties_calculate(binary_image, rules=DEFAULT_FILTERS)
     nbubbles, marker_image, \
         prop_table = _bubble_properties_table(binary_image)
     # filter based on the defined rules
-    properties, id_image = _bubble_properties_filter(prop_table,
-                                                     marker_image,
-                                                     rules)
-    return properties, id_image
+    properties = _bubble_properties_filter(prop_table, rules) #, id_image
+    return properties # id_image,
+
 
 def bubble_properties_plot(property_table,
                            which_property="equivalent_diameter",
