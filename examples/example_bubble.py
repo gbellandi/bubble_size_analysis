@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 
-from bubblekicker.bubblekicker import BubbleKicker, batchbubblekicker
+from bubblekicker.bubblekicker import (BubbleKicker, batchbubblekicker,
+                                       bubble_properties_calculate,
+                                       _bubble_properties_filter,
+                                       bubble_properties_plot)
+
 from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
 
 ###############
@@ -24,7 +28,7 @@ bubbler.plot()
 bubbler.what_have_i_done()
 
 ###############
-# EXAMPLE 2: individual dequence
+# EXAMPLE 2: individual sequence
 ###############
 
 # setup the object
@@ -56,6 +60,15 @@ bubbler.clear_border_skimage()
 bubbler.plot()
 bubbler.what_have_i_done()
 
+# switch color channel
+bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
+print(bubbler.what_channel())
+bubbler.plot()
+
+bubbler.switch_channel('green')
+print(bubbler.what_channel())
+bubbler.plot()
+
 ###############
 # EXAMPLE 3: running a batch sequence
 ###############
@@ -65,18 +78,31 @@ res = batchbubblekicker('examples/data', 'red',
                         91, 18, 3, 1, 1)
 print(res)
 
-
 ###############
-# EXAMPLE 4: Some other functions
+# EXAMPLE 4: Property functions
 ###############
 
-bubbler = BubbleKicker('drafts/0325097m_0305.tif', channel='red')
-print(bubbler.what_channel())
-bubbler.plot()
+# derive and PLOT the bubble properties as a table with no filter
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+id_image, props = bubble_properties_calculate(result, rules={})
+fig, axs = bubble_properties_plot(props, "equivalent_diameter")
+fig.savefig("examples/output_eq_diameter.png")
+fig, axs = bubble_properties_plot(props, "area")
+fig.savefig("examples/output_area.png")
 
-bubbler.switch_channel('green')
-print(bubbler.what_channel())
-bubbler.plot()
+# filter bubble properties based on a DEFAULT filter
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+id_image, props = bubble_properties_calculate(result)
+print(props)
 
+# filter bubble properties based on CUSTOM filter ruleset
+custom_filter = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
+                 'convexity': {'min': 1.92}}
+bubbler = CannyPipeline('drafts/0325097m_0305.tif', channel='red')
+result = bubbler.run([120, 180], 3, 3, 1, 1)
+id_image, props = bubble_properties_calculate(result, rules=custom_filter)
+print(props)
 
 plt.show()

@@ -6,16 +6,24 @@ S. Van Hoey
 import os
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
 from skimage.data import imread
 from skimage.feature import canny
 from skimage.segmentation import clear_border
 from skimage.morphology import dilation, rectangle
+from skimage.measure import regionprops
 
 import cv2 as cv
 
+from bubblekicker.utils import (calculate_convexity,
+                                calculate_circularity_reciprocal)
+
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
+DEFAULT_FILTERS = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
+                   'convexity': {'min': 0.92}}
 
 
 class NotAllowedChannel(Exception):
@@ -247,13 +255,6 @@ class BubbleKicker(object):
                           '- opencv'.format(footprintsize))
         return image
 
-    def label_bubbles(self):
-        """provide a label for each bubble in the image"""
- 
-        ret, markers = cv.connectedComponents(1 - self.current_image)
-
-        return ret, markers
-
     def what_have_i_done(self):
         """ print the current log statements as a sequence of
         performed steps"""
@@ -267,15 +268,113 @@ class BubbleKicker(object):
             ax.set_title(self.logs.log[-1])
         return fig, ax
 
-    def calculate_properties(self):
-        """calculate the required statistics"""
-        # regionprops
-        return None
 
-    def calculate_distribution(self):
-        """calculate and create the distribution plot"""
-        # using the elf.current_image => calculate and derive distribution plot
-        # you could opt to have the plot function itself outside the class
-        # as this makes it more general
-        return None
+def _bubble_properties_table(binary_image):
+    """provide a label for each bubble in the image"""
+
+    nbubbles, marker_image = cv.connectedComponents(1 - binary_image)
+    props = regionprops(marker_image)
+    bubble_properties = \
+        pd.DataFrame([{"label": bubble.label,
+                       "area": bubble.area,
+                       "centroid": bubble.centroid,
+                       "convex_area": bubble.convex_area,
+                       "equivalent_diameter": bubble.equivalent_diameter,
+                       "perimeter": bubble.perimeter} for bubble in props])
+
+    bubble_properties["convexity"] = \
+        calculate_convexity(bubble_properties["perimeter"],
+                            bubble_properties["area"])
+    bubble_properties["circularity_reciprocal"] = \
+        calculate_circularity_reciprocal(bubble_properties["perimeter"],
+                                         bubble_properties["area"])
+
+    bubble_properties = bubble_properties.set_index("label")
+
+    return nbubbles, marker_image, bubble_properties
+
+
+def _bubble_properties_filter(property_table, id_image,
+                              rules=DEFAULT_FILTERS):
+    """exclude bubbles based on a set of rules
+
+    :return:
+    """
+    bubble_props = property_table.copy()
+    all_ids = bubble_props.index.tolist()
+
+    for prop_name, ruleset in rules.items():
+        print(ruleset)
+        for rule, value in ruleset.items():
+            if rule == 'min':
+                bubble_props = \
+                    bubble_props[bubble_props[prop_name] > value]
+            elif rule == 'max':
+                bubble_props = \
+                    bubble_props[bubble_props[prop_name] < value]
+            else:
+                raise Exception("Rule not supported, "
+                                "use min or max as filter")
+
+    removed_ids = [el for el in all_ids if el
+                   not in bubble_props.index.tolist()]
+    for idb in removed_ids:
+        id_image[id_image == idb] = 0
+
+    return id_image, bubble_props
+
+
+def bubble_properties_calculate(binary_image,
+                                rules=DEFAULT_FILTERS):
+    """
+
+    :param binary_image:
+    :param rules:
+    :return:
+    """
+    # get the bubble identifications and properties
+    nbubbles, id_image, \
+        prop_table = _bubble_properties_table(binary_image)
+    # filter based on the defined rules
+    id_image, properties = _bubble_properties_filter(prop_table,
+                                                     id_image, rules)
+    return id_image, properties
+
+
+def bubble_properties_plot(property_table,
+                           which_property="equivalent_diameter",
+                           bins=20):
+    """calculate and create the distribution plot"""
+    fontsize_labels = 14.
+    formatter = FuncFormatter(
+        lambda y, pos: "{:d}%".format(int(round(y * 100))))
+    fig, ax1 = plt.subplots()
+    ax1.hist(property_table[which_property], bins,
+             normed=0, cumulative=False, histtype='bar',
+             color='gray', ec='white')
+    ax1.get_xaxis().tick_bottom()
+
+    # left axis - histogram
+    ax1.set_ylabel(r'Frequency', color='gray',
+                   fontsize=fontsize_labels)
+    ax1.spines['top'].set_visible(False)
+
+    # right axis - cumul distribution
+    ax2 = ax1.twinx()
+    ax2.hist(property_table[which_property],
+             bins, normed=1, cumulative=True,
+             histtype='step', color='k', linewidth= 3.)
+    ax2.yaxis.set_major_formatter(formatter)
+    ax2.set_ylabel(r'Cumulative percentage (%)', color='k',
+                   fontsize=fontsize_labels)
+    ax2.spines['top'].set_visible(False)
+    ax2.set_ylim(0, 1.)
+
+    # additional options
+    ax1.set_xlim(0, property_table[which_property].max())
+    ax1.tick_params(axis='x', which='both', pad=10)
+    ax1.set_xlabel(which_property)
+
+    return fig, (ax1, ax2)
+
 
