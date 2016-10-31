@@ -1,5 +1,4 @@
-# Bubble Size Analysis (BSA
-)
+# Bubble Size Analysis (BSA)
 
 This repository contains a selection of tools ready to be used for bubble detection.
 Here we want to provide what we experienced to be a functional sequence of commands that can be quickly aplied for image analysis in bubble detection.
@@ -7,6 +6,9 @@ Here we want to provide what we experienced to be a functional sequence of comma
 ### Packages used 
 - opencv
 - skimage
+
+### Requirements
+At the moment only fully compatible for Python 3.5
 
 ## The Idea
 The user is provided with a number of tools that have been already adjusted to be applicable to the purpose of bubble detection, so to shorten the time expended in developing your own algorithm and parameter selection.
