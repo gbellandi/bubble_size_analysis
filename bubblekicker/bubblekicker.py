@@ -167,7 +167,7 @@ class BubbleKicker(object):
         the openCV package"""
 
         image = cv.adaptiveThreshold(self.current_image, 1,
-                                     cv.ADAPTIVE_THRESH_MEAN_C,
+                                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
                                      cv.THRESH_BINARY, blocksize, cvalue)
 
         self.current_image = image
