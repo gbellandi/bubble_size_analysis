@@ -9,8 +9,10 @@ class CannyPipeline(BubbleKicker):
 
     def run(self, threshold, dilate_footprint, border_buffer_size,
             border_bgval, erode_footprint):
+		
         """Execute the different algorithms as a pipeline
         with given settings
+		
         Parameters
         ----------
         threshold: [n, m]
