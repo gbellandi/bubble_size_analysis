@@ -28,7 +28,7 @@ bubbler.plot()
 bubbler.what_have_i_done()
 
 ###############
-# EXAMPLE 2: individual dequence
+# EXAMPLE 2: individual sequence
 ###############
 
 # setup the object
