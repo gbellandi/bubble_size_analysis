@@ -8,23 +8,30 @@ This repository collects a selection of processing steps to be used for bubble d
 
 Furthermore, the derivation of the bubble properties and associated graphs is integrated within the code.
 
-### Image analysis packages used 
+## Image analysis packages used 
 For the algorithmic part, i.e. the image analysis steps, the following excellent packages are used:
 - opencv
 - skimage
 
-### Requirements
+## Requirements
 At the moment only fully compatible for Python 3.5. The package is not yet on pypy, for installation, download the code and from within the folder:
 
 ```
 python setup.py install
 ```
 
-## The Idea
-The user is provided with a number of image processing steps that already have been djusted to be applicable for the purpose of bubble detection. Hence, to shorten the time expended in developing your own bubble detection algorithm and parameter selection. As a matter of fact, the time needed for this process is not negligible and this wants to be a starting platform to efficiently start to detect bubbles. Hence, it provides the algorithmic power of `opencv` and `skimage` in an application oriented workflow, going from interactively testing the processing steps to an automatic processing. 
+## The structure
+The user is provided with a number of image processing steps that already have been adjusted to be applicable for the purpose of bubble detection. Hence, to shorten the time expended in developing your own bubble detection algorithm and parameter selection. As a matter of fact, the time needed for this process is not negligible and this wants to be a starting platform to efficiently start to detect bubbles. Moreover, the user-specific conditions can require an alternative sequence of processing steps. The package provides this algorithmic freedom (easily create and adjust other sequances in pipelines) in a structured way. Hence, the package integrates the algorithmic power of `opencv` and `skimage` in an application oriented workflow, going from interactively testing the processing steps to an automatic processing. 
+
+### Perform an interactive sequence of processing steps
+You can set your object and apply the different imaghe processing steps available in `BubbleKicker` in order to find your own perfefct sequence of processing steps. 
+
+Each function directly updates your `current_image`. In order to check the performed steps and the applied parameters since the raw image, the function `what_have_i_done` provides a history on the functions. When not satisfied of the sequence, the `reset_to_raw` function resets your image back to the raw original image and alternatives sequences can be tested. 
+
+See [example 2 in example_bubble.py](https://github.com/gbellandi/bubble_size_analysis/blob/master/examples/example_bubble.py#L31)
 
 ### Run a pipeline
-To get an idea of how the pipeline definition of the package works, check and test one of the two default pipelines:
+A sequence of processing steps is organised in a processing pipelins. To get an idea of how the pipeline definition of the package works, check and test one of the two default pipelines:
 
 - Canny pipeline:
 	apply a Canny filter for edge detection on the whole image in combination with furhter cleaning towards and interpretable binary image.
@@ -34,14 +41,9 @@ To get an idea of how the pipeline definition of the package works, check and te
 
 See [example 1 in example_bubble.py](https://github.com/gbellandi/bubble_size_analysis/blob/master/examples/example_bubble.py#L11)
 
-### Perform an individual sequence
-You can set your object and apply the different imaghe processing steps available in `BubbleKicker` in order to find your own perfefct sequence of processing steps. 
+Anyone can reuse the existing pipelines with alternative parameters or can design a new custom pipeline with an alternative 
 
-Each function directly updates your `current_image`. In order to check the performed steps and the applied parameters since the raw image, the function `what_have_i_done` provides a history on the functions. When not satisfied of the sequence, the `reset_to_raw` function resets your image back to the raw original image and alternatives sequences can be tested. 
-
-See [example 2 in example_bubble.py](https://github.com/gbellandi/bubble_size_analysis/blob/master/examples/example_bubble.py#L31)
-
-### Running a pipeline on a bunch of files/directories
+### Running a pipeline on a bunch of images
 Normally the analysis of bubbles is taking place on tons of images, thus with the `batchbubblekicker` one can run any of the pipelines with custom parameters on an entire folder of images. 
 
 See [expample 3 in example_bubble.py](https://github.com/gbellandi/bubble_size_analysis/blob/master/examples/example_bubble.py#L73)
@@ -77,7 +79,4 @@ bubble_properties_plot(property_table, "equivalent_diameter")
 ```
 
 ![diameter](examples/output_eq_diameter.png)
-
-
-
 
