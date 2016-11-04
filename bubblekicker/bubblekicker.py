@@ -113,7 +113,7 @@ class BubbleKicker(object):
         self.logs.clear_log()
 
     def switch_channel(self, channel):
-        """change the channel"""
+        """change the color channel"""
         self._channel_control(channel)
         self._channel = channel
         self.raw_image = self.raw_file[:, :, CHANNEL_CODE[self._channel]]
@@ -122,7 +122,7 @@ class BubbleKicker(object):
         print("Currently using channel {}".format(self._channel))
 
     def what_channel(self):
-        """check the current working channel"""
+        """check the current working channel (R, G or B?)"""
         print(self._channel)
 
     @staticmethod
@@ -134,7 +134,8 @@ class BubbleKicker(object):
 
     def edge_detect_canny_opencv(self, threshold=[0.01, 0.5]):
         """perform the edge detection algorithm of Canny on the image using
-        the openCV package"""
+        the openCV package. Thresholds are respectively min and max threshodls for building 
+	the gaussian."""
 
         image = cv.Canny(self.current_image,
                          threshold[0],
@@ -238,7 +239,18 @@ class BubbleKicker(object):
         return self.current_image
 
     def clear_border_skimage(self, buffer_size=3, bgval=1):
-        """clear the borders of the image"""
+        """clear the borders of the image using a belt of pixels definable in buffer_size and 
+	asign a pixel value of bgval
+	
+	Parameters
+        ----------
+        buffer_size: int
+	indicates the belt of pixels around the image border that should be considered to 
+	eliminate touching objects (default is 3)
+	
+	bgvalue: int
+	all touching objects are set to this value (default is 1)
+	"""
 
         # perform algorithm
         image_inv = cv.bitwise_not(self.current_image)
