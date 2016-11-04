@@ -146,7 +146,7 @@ class BubbleKicker(object):
         return image
 
     def edge_detect_canny_skimage(self, sigma=3, threshold=[0.01, 0.5]):
-        """perform the edge detection algorithm of Canny on the image"""
+        """perform the edge detection algorithm of Canny on the image using scikit package"""
         image = canny(self.current_image,
                       sigma=sigma,
                       low_threshold=threshold[0],
@@ -178,7 +178,7 @@ class BubbleKicker(object):
 	"""
 
         image = cv.adaptiveThreshold(self.current_image, 1,
-                                     cv.ADAPTIVE_THRESH_MEAN_C,
+                                     cv.ADAPTIVE_THRESH_GAUSSIAN_C,
                                      cv.THRESH_BINARY, blocksize, cvalue)
 
         self.current_image = image
