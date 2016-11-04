@@ -265,7 +265,7 @@ class BubbleKicker(object):
         return image
 
     def erode_opencv(self, footprintsize=1):
-        """erode the image"""
+        """erode detected edges with a given footprint. This function is meant to be used after dilation of the edges so to reset the original edge."""
 
         kernel = np.ones((footprintsize, footprintsize), np.uint8)
         image = cv.erode(self.current_image, kernel, iterations=1)
