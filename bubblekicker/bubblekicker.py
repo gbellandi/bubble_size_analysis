@@ -166,7 +166,16 @@ class BubbleKicker(object):
         """perform the edge detection algorithm of Canny on the image using an adaptive 
 	threshold method for which the user can specify width of the window of action 
 	and a C value used as reference for building the gaussian distribution. This function 
-	uses the openCV package"""
+	uses the openCV package
+	
+	Parameters
+        ----------
+	blocksize:
+
+	cvalue:
+
+
+	"""
 
         image = cv.adaptiveThreshold(self.current_image, 1,
                                      cv.ADAPTIVE_THRESH_MEAN_C,
