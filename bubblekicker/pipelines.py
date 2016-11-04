@@ -11,24 +11,27 @@ class CannyPipeline(BubbleKicker):
             border_bgval, erode_footprint):
 		
         """Execute the different algorithms as a pipeline
-        with given settings
+        with given settings using the Canny method with fixed thresholds throughout the
+	whole image.
 		
         Parameters
         ----------
         threshold: [n, m]
-            array of two parameters representing min and max 
-            thresholds for the hysteresis procedure of the opencv
-            Canny method
+            	array of two parameters representing min and max 
+            	thresholds for the hysteresis procedure of the opencv
+            	Canny method
         dilate_footprint: int
-            footprint (kernel) of the opencv dilate function.
-            Should be an odd number.
+            	footprint (kernel) of the opencv dilate function.
+            	Should be an odd number.
         border_buffer_size: int
-            width of the border around the image used to clear 
-            possible partial objects
+            	width of the border around the image used to clear 
+        	possible partial objects
         border_bgval: int
-            value to be given to the border touching objects
-        
-        """
+        	value to be given to the border touching objects
+	erode_footprint: int
+		the integer is used to build the kernel that is going to replacethe values 
+		at the edge of your object. The bigger it is the more pixels will be eroded 
+		from the edge of the bubble."""
 
         self.edge_detect_canny_opencv(threshold)
         self.dilate_opencv(dilate_footprint)
@@ -48,7 +51,18 @@ class AdaptiveThresholdPipeline(BubbleKicker):
     def run(self, blocksize, cvalue, border_buffer_size,
             border_bgval, erode_footprint):
         """execute the different algorithms as a pipeline
-        with given settings"""
+        with given settings for the adaptive threshold method
+	
+        Parameters
+        ----------
+        
+        border_buffer_size: int
+            width of the border around the image used to clear 
+            possible partial objects
+        border_bgval: int
+            value to be given to the border touching objects
+	erode_footprint"""
+
         self.adaptive_threshold_opencv(blocksize, cvalue)
         self.clear_border_skimage(border_buffer_size, border_bgval)
         self.erode_opencv(erode_footprint)
