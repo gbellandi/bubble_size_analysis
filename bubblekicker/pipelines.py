@@ -56,12 +56,19 @@ class AdaptiveThresholdPipeline(BubbleKicker):
         Parameters
         ----------
         
-        border_buffer_size: int
-            width of the border around the image used to clear 
-            possible partial objects
+        blocksize:
+		
+	cvalue:
+		
+	border_buffer_size: int
+		width of the border around the image used to clear 
+		possible partial objects
         border_bgval: int
-            value to be given to the border touching objects
-	erode_footprint"""
+		value to be given to the border touching objects
+	erode_footprint: int
+		the integer is used to build the kernel that is going to replacethe values 
+		at the edge of your object. The bigger it is the more pixels will be eroded 
+		from the edge of the bubble."""
 
         self.adaptive_threshold_opencv(blocksize, cvalue)
         self.clear_border_skimage(border_buffer_size, border_bgval)
