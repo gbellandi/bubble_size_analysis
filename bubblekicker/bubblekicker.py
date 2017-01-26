@@ -18,8 +18,8 @@ from skimage.measure import regionprops
 
 import cv2 as cv
 
-from bubblekicker.utils import (calculate_convexity,
-                                calculate_circularity_reciprocal)
+#from bubblekicker.utils import (calculate_convexity,
+#                                calculate_circularity_reciprocal)
 
 CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
 DEFAULT_FILTERS = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
