@@ -1,6 +1,6 @@
 
-from bubblekicker.bubblekicker import BubbleKicker
-from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
-from bubblekicker.utils import (calculate_convexity,
-                                calculate_circularity_reciprocal)
+from bubblekicker import BubbleKicker
+from pipelines import CannyPipeline, AdaptiveThresholdPipeline
+from utils import (calculate_convexity, 
+                   calculate_circularity_reciprocal)
 

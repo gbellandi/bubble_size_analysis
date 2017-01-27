@@ -1,5 +1,5 @@
 
-from bubblekicker.bubblekicker import BubbleKicker
+from bubblekicker import BubbleKicker
 
 
 class CannyPipeline(BubbleKicker):
