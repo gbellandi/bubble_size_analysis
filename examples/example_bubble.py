@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 
 from bubblekicker.bubblekicker import (BubbleKicker, batchbubblekicker,
                                        bubble_properties_calculate,
-                                       _bubble_properties_filter,
                                        bubble_properties_plot)
 
 from bubblekicker.pipelines import CannyPipeline, AdaptiveThresholdPipeline
