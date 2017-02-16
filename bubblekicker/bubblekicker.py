@@ -10,7 +10,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 
-from skimage.data import imread
 from skimage.feature import canny
 from skimage.segmentation import clear_border
 from skimage.morphology import dilation, rectangle
@@ -21,7 +20,7 @@ import cv2 as cv
 from bubblekicker.utils import (calculate_convexity,
                                 calculate_circularity_reciprocal)
 
-CHANNEL_CODE = {'red': 0, 'green': 1, 'blue': 2}
+CHANNEL_CODE = {'blue': 0, 'green': 1, 'red': 2}
 DEFAULT_FILTERS = {'circularity_reciprocal': {'min': 0.2, 'max': 1.6},
                    'convexity': {'min': 0.92}}
 
@@ -104,7 +103,7 @@ class BubbleKicker(object):
         """read the image from a file and store
         an RGB-image MxNx3
         """
-        image = imread(filename)
+        image = cv.imread(filename)
         return image
 
     def reset_to_raw(self):
@@ -163,19 +162,18 @@ class BubbleKicker(object):
         return image
 
     def adaptive_threshold_opencv(self, blocksize=91, cvalue=18):
-        """perform the edge detection algorithm of Canny on the image using an adaptive 
-	threshold method for which the user can specify width of the window of action 
-	and a C value used as reference for building the gaussian distribution. This function 
-	uses the openCV package
-	
-	Parameters
+        """
+        perform the edge detection algorithm of Canny on the image using an
+        adaptive threshold method for which the user can specify width of the
+        window of action and a C value used as reference for building
+        the gaussian distribution. This function uses the openCV package
+
+        Parameters
         ----------
-	blocksize:
+        blocksize:
+        cvalue:
 
-	cvalue:
-
-
-	"""
+        """
 
         image = cv.adaptiveThreshold(self.current_image, 1,
                                      cv.ADAPTIVE_THRESH_GAUSSIAN_C,
