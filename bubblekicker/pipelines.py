@@ -71,6 +71,8 @@ class AdaptiveThresholdPipeline(BubbleKicker):
 		from the edge of the bubble."""
 
         self.adaptive_threshold_opencv(blocksize, cvalue)
+		self.dilate_opencv(dilate_footprint)
+        self.fill_holes_opencv()
         self.clear_border_skimage(border_buffer_size, border_bgval)
         self.erode_opencv(erode_footprint)
 
