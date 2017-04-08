@@ -48,7 +48,7 @@ class AdaptiveThresholdPipeline(BubbleKicker):
         super(AdaptiveThresholdPipeline, self).__init__(filename,
                                                         channel=channel)
 
-    def run(self, blocksize, cvalue, border_buffer_size,
+    def run(self, blocksize, cvalue, dilate_footprint, border_buffer_size,
             border_bgval, erode_footprint):
         """execute the different algorithms as a pipeline
         with given settings for the adaptive threshold method
@@ -56,9 +56,17 @@ class AdaptiveThresholdPipeline(BubbleKicker):
         Parameters
         ----------
         
-        blocksize:
+    blocksize: int
+		Size of a pixel neighborhood that is used to calculate a threshold 
+		value for the pixel: 3, 5, 7, and so on
 		
-	cvalue:
+	cvalue: int
+		Constant subtracted from the mean or weighted mean 
+		(see the details below). Normally, it is positive but may be zero or 
+		negative as well
+	
+	dilate_footprint: int
+		footprint in pixels that is used to dilate the detected blob
 		
 	border_buffer_size: int
 		width of the border around the image used to clear 
