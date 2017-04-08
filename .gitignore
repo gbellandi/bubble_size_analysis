@@ -92,3 +92,5 @@ ENV/
 examples/data
 .idea/
 *.xml
+*.jpg
+*.png
