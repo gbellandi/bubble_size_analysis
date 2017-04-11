@@ -48,7 +48,7 @@ class AdaptiveThresholdPipeline(BubbleKicker):
         super(AdaptiveThresholdPipeline, self).__init__(filename,
                                                         channel=channel)
 
-    def run(self, blocksize, cvalue, dilate_footprint, border_buffer_size,
+    def run(self, blocksize, cvalue, border_buffer_size,
             border_bgval, erode_footprint):
         """execute the different algorithms as a pipeline
         with given settings for the adaptive threshold method
@@ -79,8 +79,8 @@ class AdaptiveThresholdPipeline(BubbleKicker):
 		from the edge of the bubble."""
 
         self.adaptive_threshold_opencv(blocksize, cvalue)
-		self.dilate_opencv(dilate_footprint)
-        self.fill_holes_opencv()
+		#self.dilate_opencv(dilate_footprint)   dilate_footprint, 
+		#self.fill_holes_opencv()
         self.clear_border_skimage(border_buffer_size, border_bgval)
         self.erode_opencv(erode_footprint)
 
