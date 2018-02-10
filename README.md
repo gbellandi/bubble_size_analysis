@@ -8,17 +8,30 @@ This repository collects a selection of processing steps to be used for bubble d
 
 Furthermore, the derivation of the bubble properties and associated graphs is integrated within the code.
 
+
 ## Image analysis packages used 
 For the algorithmic part, i.e. the image analysis steps, the following excellent packages are used:
 - opencv
 - skimage
 
 ## Requirements
-At the moment only fully compatible for Python 3.5. The package is not yet on pypy, for installation, download the code and from within the folder:
+Only fully compatible for Python 3.5.
+
+## Installation
+For installation, download the code and run the following from within the folder:
 
 ```
 python setup.py install
 ```
+
+The package is not yet on pypy. 
+
+
+## Recent developments
+The package has recently been tested to measure size and shape for `aerobic granules` in wastewater treatment.
+
+The package has been firstly presented at an international conference in 2016.
+Bellandi G., Amerlinck Y., Van Hoey S., Neves do Amaral A. and Nopens I. “Image analysis procedure to derive bubble size distributions for better understanding of the oxygen transfer mechanism” (2016) 7th International Conference and Exhibition on Water, Wastewater & Environmental Monitoring (IT&Water), Telford, UK. Papers.
 
 ## The structure
 The user is provided with a number of image processing steps that already have been adjusted to be applicable for the purpose of bubble detection. Hence, to shorten the time expended in developing your own bubble detection algorithm and parameter selection. As a matter of fact, the time needed for this process is not negligible and this wants to be a starting platform to efficiently start to detect bubbles. Moreover, the user-specific conditions can require an alternative sequence of processing steps. The package provides this algorithmic freedom (easily create and adjust other sequances in pipelines) in a structured way. Hence, the package integrates the algorithmic power of `opencv` and `skimage` in an application oriented workflow, going from interactively testing the processing steps to an automatic processing. 
