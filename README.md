@@ -15,12 +15,18 @@ For the algorithmic part, i.e. the image analysis steps, the following excellent
 - skimage
 
 ## Requirements
-Only fully compatible for Python 3.5.
+Only fully compatible for Python 2.7. However, there are compatbility issues with opencv3 wich can only run on Python 3.5. Therefore it is suggested to run create a separate environment as below.
 
 ## Installation
 For installation, download the code and run the following from within the folder:
 
 ```
+conda create -n bubble2 python=2.7
+activate bubble2
+conda install -c menpo opencv3
+conda install -c conda-forge numpy pandas matplotlib scikit-image
+git clone https://github.com/gbellandi/bubble_size_analysis.git
+cd bubble_size_analysis
 python setup.py install
 ```
 
